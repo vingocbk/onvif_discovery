@@ -1,0 +1,13 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "files.associations": {
+        "*.cpp": "cpp",
+        "wsddapi.h": "c",
+        "random": "c",
+        "*.nsmap": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "utility": "c"
+    }
+}
