@@ -11,13 +11,15 @@
 #include<netdb.h>
 #include<ifaddrs.h>
 #include<unistd.h>
+#include<math.h>
+// #include<mathcalls.h>
 
 /*WS-Discovery specialization address and port of UDP*/
 #define MULTICAST_GROUP ("239.255.255.250")  
 #define PORT (3702) 
 
 char* get_address();
-
+char * toArray(int number);
 char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 				onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
 				onvif://www.onvif.org/name/IPCAM \
@@ -269,19 +271,21 @@ char* get_address(){
        x=x/10;
        size++;
     }
+	x = port_onvif;
     char port_array[size];
-    for (int i = size - 1; x ; x = x/10, i-- ) {
-       port_array[i] = x % 10;
+    for (int i = size - 1; x ; i--) {
+		
+       port_array[i] = (char)(x % 10) + '0';
+	   x = x/10;
+	   printf("address:%d, %c, %d, %d \n",i, port_array[i], size, x);
     }
-
-
-	char* local_ip = malloc(500);
-	strcpy(local_ip, (char*)"");
-	strcat(local_ip, (char*)"http://");
+	
+	char* local_ip = malloc(100);
+	strcpy(local_ip, (char*)"http://");
 	strcat(local_ip, (char*)host);
 	strcat(local_ip, (char*)":");
 	strcat(local_ip, (char*)port_array);
-	strcat(local_ip, (char*)"/onvif/device_service");
+	strcat(local_ip, (char*)"/onvif/device_service\0");
 	printf("address: %s \n", local_ip);
 	return local_ip;
 }
