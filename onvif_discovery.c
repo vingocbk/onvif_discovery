@@ -10,7 +10,7 @@
 #include<sys/socket.h>
 #include<netdb.h>
 #include<ifaddrs.h>
-#include<unistd.h>
+#include<unistd.h> 
 #include<math.h>
 // #include<mathcalls.h>
 
@@ -22,54 +22,11 @@ char* get_address();
 char * toArray(int number);
 char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 				onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
-				onvif://www.onvif.org/name/IPCAM \
+				onvif://www.onvif.org/name/ELCOM_IPCAM \
 				onvif://www.onvif.org/location/country/Vietnam"; 
 
 // char  g_scopes[] = "onvif://www.onvif.org/name/IPCAM";
 
-// int main(int argc, char * argv[]) {
-// 	printf("Start------!!!\n");
-// 	SOAP_SOCKET m, s;
-// 	struct soap soap;
-
-// 	soap_init1(&soap, SOAP_IO_UDP);
-
-// 	m = soap_bind(&soap, NULL,  PORT, 100);
-//  	/* reuse address */
-//  	soap.bind_flags = SO_REUSEADDR;
-// 	if (!soap_valid_socket(m)) {
-// 		soap_print_fault(&soap, stderr);
-// 		exit(-1);
-// 	}
-// 	/* optionally join a multicast group */
-// 	if (MULTICAST_GROUP) { 
-// 		struct ip_mreq mreq;
-// 		mreq.imr_multiaddr.s_addr = inet_addr(MULTICAST_GROUP);
-// 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-// 		if (setsockopt(soap.socket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-// 			printf("setsockopt failed\n");
-// 	      		exit(-1);
-// 		}
-// 	}
-// 	printf("socket bind success %d\n", m);
-// 	for (;;) {
-// 		printf("socket connect %d\n", s);
-// 		s = soap_accept(&soap);
-// 		if (!soap_valid_socket(s)) {
-// 			soap_print_fault(&soap, stderr);
-// 			exit(-1);
-// 		}
-// 		if (soap_serve(&soap) != SOAP_OK) {
-// 			soap_print_fault(&soap, stderr);
-// 		}
-// 		soap_destroy(&soap);
-// 		soap_end(&soap);
-		
-// 	}
-
-// 	soap_done(&soap);
-// 	return 0;
-// }
 
 const char* host = "239.255.255.250";	
 int port = 3702;
@@ -104,8 +61,6 @@ int main(int argc, char** argv)
 	      		exit(-1);
 		}
 	}
-	
-
 
 	// signal(SIGINT, &sighandler);
 	while (1)
@@ -116,9 +71,6 @@ int main(int argc, char** argv)
 
 	return 0;
 }
-
-
-
 
 
 
@@ -168,24 +120,24 @@ soap_wsdd_mode wsdd_event_Probe(struct soap *soap, const char *MessageID,
 	printf("\n");
 
 
-	// soap->header->wsa__RelatesTo = (struct wsa__Relationship*) soap_malloc(
-	// 		soap, sizeof(struct wsa__Relationship));
+	soap->header->wsa__RelatesTo = (struct wsa__Relationship*) soap_malloc(
+			soap, sizeof(struct wsa__Relationship));
 
-	// if (soap->header->wsa__ReplyTo) {
-	// 	soap->header->wsa__To = soap->header->wsa__ReplyTo->Address;
-	// } else {
-	// 	soap->header->wsa__To = NULL;
-	// }
-	// soap->header->wsa__RelatesTo->__item = soap->header->wsa__MessageID;
-	// soap->header->wsa__RelatesTo->RelationshipType = NULL;
-	// soap->header->wsa__RelatesTo->__anyAttribute = NULL;
-	// soap->header->wsa__Action = "http://schemas.xmlsoap.org/ws/2005/04/discovery/ProbeMatches";
-	// soap->header->wsa__ReplyTo = NULL;
+	if (soap->header->wsa__ReplyTo) {
+		soap->header->wsa__To = soap->header->wsa__ReplyTo->Address;
+	} else {
+		soap->header->wsa__To = NULL;
+	}
+	soap->header->wsa__RelatesTo->__item = soap->header->wsa__MessageID;
+	soap->header->wsa__RelatesTo->RelationshipType = NULL;
+	soap->header->wsa__RelatesTo->__anyAttribute = NULL;
+	soap->header->wsa__Action = "http://schemas.xmlsoap.org/ws/2005/04/discovery/ProbeMatches";
+	soap->header->wsa__ReplyTo = NULL;
 
 	char* address = get_address();
 	soap_wsdd_init_ProbeMatches(soap, matches);
 	soap_wsdd_add_ProbeMatch(soap, matches,
-				"urn:uuid:464A4854-4656-5242-4530-313035394100",
+				soap_wsa_rand_uuid(soap),
 				"tdn:NetworkVideoTransmitter", g_scopes,
 				NULL,
 				address,
@@ -264,28 +216,29 @@ char* get_address(){
 	}
 	freeifaddrs(ifaddr);
 
-	int ans = 140;
     int x = port_onvif;
     int size = 0;
     while ( x ) {
-       x=x/10;
-       size++;
+		x=x/10;
+		size++;
     }
 	x = port_onvif;
     char port_array[size];
     for (int i = size - 1; x ; i--) {
-		
-       port_array[i] = (char)(x % 10) + '0';
-	   x = x/10;
-	   printf("address:%d, %c, %d, %d \n",i, port_array[i], size, x);
+		port_array[i] = x % 10 + '0';
+		x = x/10;
+	//    printf("address:%d, %c, %d, %d \n",i, port_array[i], size, x);
     }
-	
+	// port_array[3] = '0';
+	// port_array[2] = '0';
+	// port_array[1] = '0';
+	// port_array[0] = '8';
 	char* local_ip = malloc(100);
 	strcpy(local_ip, (char*)"http://");
 	strcat(local_ip, (char*)host);
 	strcat(local_ip, (char*)":");
 	strcat(local_ip, (char*)port_array);
-	strcat(local_ip, (char*)"/onvif/device_service\0");
+	strcat(local_ip, (char*)"/onvif/device_service");
 	printf("address: %s \n", local_ip);
 	return local_ip;
 }
