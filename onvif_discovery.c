@@ -27,13 +27,14 @@
 // #define DISCOVERY_ON "Hello, World!"
 // #define RESPONSE "Hello, World!"
 
+pthread_t thread_http, thread_onvif;
 struct http_server_s* server;
 
 char* get_address();
 char* toArray(int number);
 void* http_server(void *vargp);
 void* onvif_discovery_server(void *vargp);
-
+int port_http = 8001;
 
 char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 				onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
@@ -60,11 +61,14 @@ void handle_request(struct http_request_s* request) {
 	http_response_status(response, 200);
 	if (request_target_is(request, "/discovery/on")) {
 		printf("on\n");
+		pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
+		pthread_join(thread_onvif, NULL);
 		http_response_header(response, "Content-Type", "text/plain");
 		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
 	}
 	else if (request_target_is(request, "/discovery/off")) {
 		printf("off\n");
+		pthread_cancel(thread_onvif);
 		http_response_header(response, "Content-Type", "text/plain");
 		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
 	}
@@ -91,11 +95,12 @@ int main(int argc, char** argv)
 		port_onvif = 8000;
 	}
 	printf("port onvif: %d\n",port_onvif);
+	printf("port http: %d\n",port_http);
 	
 
-	pthread_t thread_http, thread_onvif;
+	
     pthread_create(&thread_http, NULL, http_server, NULL);
-	pthread_create(&thread_http, NULL, http_server, NULL);
+	pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
     pthread_join(thread_http, NULL);
 	pthread_join(thread_onvif, NULL);
 
@@ -109,7 +114,7 @@ int main(int argc, char** argv)
 void* http_server(void *vargp)
 {
 	signal(SIGTERM, handle_sigterm);
-	server = http_server_init(8100, handle_request);
+	server = http_server_init(port_http, handle_request);
 	http_server_listen(server);
 }
 
