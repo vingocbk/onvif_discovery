@@ -4,7 +4,12 @@
 #include "soapH.h"
 #include "RemoteDiscoveryBinding.nsmap"
 #include "wsddapi.h"
+#define HTTPSERVER_IMPL
+#include "httpserver.h"
 
+#include <signal.h>
+#include <stdbool.h>
+#include <unistd.h>  //Header file for sleep(). man 3 sleep for details.
 #include<string.h>	//memset
 #include<errno.h>	//errno
 #include<sys/socket.h>
@@ -18,8 +23,18 @@
 #define MULTICAST_GROUP ("239.255.255.250")  
 #define PORT (3702) 
 
+#define RESPONSE "Hello, World!"
+// #define DISCOVERY_ON "Hello, World!"
+// #define RESPONSE "Hello, World!"
+
+struct http_server_s* server;
+
 char* get_address();
-char * toArray(int number);
+char* toArray(int number);
+void* http_server(void *vargp);
+void* onvif_discovery_server(void *vargp);
+
+
 char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 				onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
 				onvif://www.onvif.org/name/ELCOM_IPCAM \
@@ -31,6 +46,40 @@ char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 const char* host = "239.255.255.250";	
 int port = 3702;
 int port_onvif;
+bool is_turn_on_discovery = true;
+
+int request_target_is(struct http_request_s* request, char const * target) {
+	http_string_t url = http_request_target(request);
+	int len = strlen(target);
+	return len == url.len && memcmp(url.buf, target, url.len) == 0;
+}
+
+void handle_request(struct http_request_s* request) {
+	http_request_connection(request, HTTP_AUTOMATIC);
+	struct http_response_s* response = http_response_init();
+	http_response_status(response, 200);
+	if (request_target_is(request, "/discovery/on")) {
+		printf("on\n");
+		http_response_header(response, "Content-Type", "text/plain");
+		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
+	}
+	else if (request_target_is(request, "/discovery/off")) {
+		printf("off\n");
+		http_response_header(response, "Content-Type", "text/plain");
+		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
+	}
+	else {
+		http_response_header(response, "Content-Type", "text/plain");
+		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
+	}
+	http_respond(request, response);
+}
+
+void handle_sigterm(int signum) {
+	(void)signum;
+	free(server);
+	exit(0);
+}
 
 
 int main(int argc, char** argv)
@@ -41,8 +90,31 @@ int main(int argc, char** argv)
 	}else{
 		port_onvif = 8000;
 	}
-	printf("%d\n",port_onvif);
+	printf("port onvif: %d\n",port_onvif);
 	
+
+	pthread_t thread_http, thread_onvif;
+    pthread_create(&thread_http, NULL, http_server, NULL);
+	pthread_create(&thread_http, NULL, http_server, NULL);
+    pthread_join(thread_http, NULL);
+	pthread_join(thread_onvif, NULL);
+
+	return 0;
+}
+
+
+
+
+
+void* http_server(void *vargp)
+{
+	signal(SIGTERM, handle_sigterm);
+	server = http_server_init(8100, handle_request);
+	http_server_listen(server);
+}
+
+void* onvif_discovery_server(void *vargp)
+{
 	struct soap* serv = soap_new1(SOAP_IO_UDP | SOAP_IO_KEEPALIVE); 
 	serv->bind_flags=SO_REUSEADDR;
 	serv->connect_flags = SO_BROADCAST; 
@@ -65,15 +137,12 @@ int main(int argc, char** argv)
 	// signal(SIGINT, &sighandler);
 	while (1)
 	{
-		soap_wsdd_listen(serv, -1000);
+		if(is_turn_on_discovery)
+		{
+			soap_wsdd_listen(serv, 1000);
+		}
 	}
-
-
-	return 0;
 }
-
-
-
 
 
 
@@ -237,7 +306,8 @@ char* get_address(){
 	strcpy(local_ip, (char*)"http://");
 	strcat(local_ip, (char*)host);
 	strcat(local_ip, (char*)":");
-	strcat(local_ip, (char*)port_array);
+	strcat(local_ip, (char*)"8000");
+	// strcat(local_ip, (char*)port_array);
 	strcat(local_ip, (char*)"/onvif/device_service");
 	printf("address: %s \n", local_ip);
 	return local_ip;
