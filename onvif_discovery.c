@@ -25,11 +25,11 @@
 #define PORT (3702) 
 
 #define RESPONSE "Hello, World!"
-// #define DISCOVERY_ON "Hello, World!"
-// #define RESPONSE "Hello, World!"
+#define RESPONSE_ON "Hello, On!"
+#define RESPONSE_OFF "Hello, Off!"
 
-pthread_t thread_http, thread_onvif;
-struct http_server_s* server;
+// pthread_t thread_http, thread_onvif;
+// struct http_server_s* server;
 
 char* get_address();
 char* toArray(int number);
@@ -48,43 +48,42 @@ char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 const char* host = "239.255.255.250";	
 int port = 3702;
 int port_onvif;
-// bool is_turn_on_discovery = true;
+bool is_turn_on_discovery = false;
 
-int request_target_is(struct http_request_s* request, char const * target) {
-	http_string_t url = http_request_target(request);
-	int len = strlen(target);
-	return len == url.len && memcmp(url.buf, target, url.len) == 0;
-}
+// int request_target_is(struct http_request_s* request, char const * target) {
+// 	http_string_t url = http_request_target(request);
+// 	int len = strlen(target);
+// 	return len == url.len && memcmp(url.buf, target, url.len) == 0;
+// }
 
-void handle_request(struct http_request_s* request) {
-	http_request_connection(request, HTTP_AUTOMATIC);
-	struct http_response_s* response = http_response_init();
-	http_response_status(response, 200);
-	if (request_target_is(request, "/discovery/on")) {
-		printf("on\n");
-		pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
-		pthread_join(thread_onvif, NULL);
-		http_response_header(response, "Content-Type", "text/plain");
-		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
-	}
-	else if (request_target_is(request, "/discovery/off")) {
-		printf("off\n");
-		pthread_cancel(thread_onvif);
-		http_response_header(response, "Content-Type", "text/plain");
-		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
-	}
-	else {
-		http_response_header(response, "Content-Type", "text/plain");
-		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
-	}
-	http_respond(request, response);
-}
+// void handle_request(struct http_request_s* request) {
+// 	http_request_connection(request, HTTP_AUTOMATIC);
+// 	struct http_response_s* response = http_response_init();
+// 	http_response_status(response, 200);
+// 	if (request_target_is(request, "/discovery/on")) {
+// 		printf("on\n");
+		
+// 		http_response_header(response, "Content-Type", "text/plain");
+// 		http_response_body(response, RESPONSE_ON, sizeof(RESPONSE_ON) - 1);
+// 	}
+// 	else if (request_target_is(request, "/discovery/off")) {
+// 		printf("off\n");
+// 		pthread_cancel(thread_onvif);
+// 		http_response_header(response, "Content-Type", "text/plain");
+// 		http_response_body(response, RESPONSE_OFF, sizeof(RESPONSE_OFF) - 1);
+// 	}
+// 	else {
+// 		http_response_header(response, "Content-Type", "text/plain");
+// 		http_response_body(response, RESPONSE, sizeof(RESPONSE) - 1);
+// 	}
+// 	http_respond(request, response);
+// }
 
-void handle_sigterm(int signum) {
-	(void)signum;
-	free(server);
-	exit(0);
-}
+// void handle_sigterm(int signum) {
+// 	(void)signum;
+// 	free(server);
+// 	exit(0);
+// }
 
 
 int main(int argc, char** argv)
@@ -96,47 +95,8 @@ int main(int argc, char** argv)
 		port_onvif = 8000;
 	}
 	printf("port onvif: %d\n",port_onvif);
-	printf("port http: %d\n",port_http);
+	// printf("port http: %d\n",port_http);
 	
-	pthread_create(&thread_http, NULL, http_server, NULL);
-
-	struct http_response *hrep = http_get("http://localhost:8200/dvr/v1.0/GetDiscoveryMode", "User-agent:MyUserAgent\r\n"); 
-	if(hrep)
-	{
-		printf("http code: %d\n",hrep->status_code_int);
-		printf("http body: %s\n",hrep->body);
-		if(!strstr(hrep->body, "NonDiscoverable"))
-		{
-			pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
-			pthread_join(thread_onvif, NULL);
-		}
-	}
-	else{
-		printf("\nCant connect to uri -> Auto turn on thread discovery\n");
-		pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
-		pthread_join(thread_onvif, NULL);
-	}
-	
-    
-    pthread_join(thread_http, NULL);
-	
-
-	return 0;
-}
-
-
-
-
-
-void* http_server(void *vargp)
-{
-	signal(SIGTERM, handle_sigterm);
-	server = http_server_init(port_http, handle_request);
-	http_server_listen(server);
-}
-
-void* onvif_discovery_server(void *vargp)
-{
 	struct soap* serv = soap_new1(SOAP_IO_UDP | SOAP_IO_KEEPALIVE); 
 	serv->bind_flags=SO_REUSEADDR;
 	serv->connect_flags = SO_BROADCAST; 
@@ -161,7 +121,48 @@ void* onvif_discovery_server(void *vargp)
 	{
 		soap_wsdd_listen(serv, 1000);
 	}
+
+	return 0;
 }
+
+
+
+
+
+// void* http_server(void *vargp)
+// {
+// 	signal(SIGTERM, handle_sigterm);
+// 	server = http_server_init(port_http, handle_request);
+// 	http_server_listen(server);
+// }
+
+// void* onvif_discovery_server(void *vargp)
+// {
+// 	struct soap* serv = soap_new1(SOAP_IO_UDP | SOAP_IO_KEEPALIVE); 
+// 	serv->bind_flags=SO_REUSEADDR;
+// 	serv->connect_flags = SO_BROADCAST; 
+// 	if (!soap_valid_socket(soap_bind(serv, NULL, port, 1000)))
+// 	{
+// 		soap_print_fault(serv, stderr);
+// 		exit(1);
+// 	}	
+
+// 	if (MULTICAST_GROUP) { 
+// 		struct ip_mreq mreq;
+// 		mreq.imr_multiaddr.s_addr = inet_addr(MULTICAST_GROUP);
+// 		mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+// 		if (setsockopt(serv->socket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+// 			printf("setsockopt failed\n");
+// 	      		exit(-1);
+// 		}
+// 	}
+
+// 	// signal(SIGINT, &sighandler);
+// 	while (1)
+// 	{
+// 		soap_wsdd_listen(serv, 1000);
+// 	}
+// }
 
 
 
@@ -208,28 +209,44 @@ soap_wsdd_mode wsdd_event_Probe(struct soap *soap, const char *MessageID,
 	printf("\n");
 
 
-	soap->header->wsa__RelatesTo = (struct wsa__Relationship*) soap_malloc(
+	struct http_response *hrep = http_get("http://localhost:8200/dvr/v1.0/GetDiscoveryMode", "User-agent:MyUserAgent\r\n"); 
+	if(hrep)
+	{
+		printf("http code: %d\n",hrep->status_code_int);
+		printf("http body: %s\n",hrep->body);
+		if(!strstr(hrep->body, "NonDiscoverable"))
+		{
+			soap->header->wsa__RelatesTo = (struct wsa__Relationship*) soap_malloc(
 			soap, sizeof(struct wsa__Relationship));
 
-	if (soap->header->wsa__ReplyTo) {
-		soap->header->wsa__To = soap->header->wsa__ReplyTo->Address;
-	} else {
-		soap->header->wsa__To = NULL;
-	}
-	soap->header->wsa__RelatesTo->__item = soap->header->wsa__MessageID;
-	soap->header->wsa__RelatesTo->RelationshipType = NULL;
-	soap->header->wsa__RelatesTo->__anyAttribute = NULL;
-	soap->header->wsa__Action = "http://schemas.xmlsoap.org/ws/2005/04/discovery/ProbeMatches";
-	soap->header->wsa__ReplyTo = NULL;
+			if (soap->header->wsa__ReplyTo) {
+				soap->header->wsa__To = soap->header->wsa__ReplyTo->Address;
+			} else {
+				soap->header->wsa__To = NULL;
+			}
+			soap->header->wsa__RelatesTo->__item = soap->header->wsa__MessageID;
+			soap->header->wsa__RelatesTo->RelationshipType = NULL;
+			soap->header->wsa__RelatesTo->__anyAttribute = NULL;
+			soap->header->wsa__Action = "http://schemas.xmlsoap.org/ws/2005/04/discovery/ProbeMatches";
+			soap->header->wsa__ReplyTo = NULL;
 
-	char* address = get_address();
-	soap_wsdd_init_ProbeMatches(soap, matches);
-	soap_wsdd_add_ProbeMatch(soap, matches,
-				soap_wsa_rand_uuid(soap),
-				"tdn:NetworkVideoTransmitter", g_scopes,
-				NULL,
-				address,
-				10);
+			char* address = get_address();
+			soap_wsdd_init_ProbeMatches(soap, matches);
+			soap_wsdd_add_ProbeMatch(soap, matches,
+						soap_wsa_rand_uuid(soap),
+						"tdn:NetworkVideoTransmitter", g_scopes,
+						NULL,
+						address,
+						10);
+		}
+		else{
+			printf("Mode NonDiscoverable\n");
+		}
+	}
+	else{
+		printf("\nCant connect to uri -> Auto turn off thread discovery\n");
+	}
+
 
 	return SOAP_WSDD_MANAGED;
 }
