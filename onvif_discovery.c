@@ -6,17 +6,18 @@
 #include "wsddapi.h"
 #define HTTPSERVER_IMPL
 #include "httpserver.h"
+#include "http-client-c.h"
 
 #include <signal.h>
 #include <stdbool.h>
 #include <unistd.h>  //Header file for sleep(). man 3 sleep for details.
-#include<string.h>	//memset
-#include<errno.h>	//errno
-#include<sys/socket.h>
-#include<netdb.h>
-#include<ifaddrs.h>
-#include<unistd.h> 
-#include<math.h>
+#include <string.h>	//memset
+#include <errno.h>	//errno
+#include <sys/socket.h>
+#include <netdb.h>
+#include <ifaddrs.h>
+#include <unistd.h> 
+#include <math.h>
 // #include<mathcalls.h>
 
 /*WS-Discovery specialization address and port of UDP*/
@@ -47,7 +48,7 @@ char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
 const char* host = "239.255.255.250";	
 int port = 3702;
 int port_onvif;
-bool is_turn_on_discovery = true;
+// bool is_turn_on_discovery = true;
 
 int request_target_is(struct http_request_s* request, char const * target) {
 	http_string_t url = http_request_target(request);
@@ -97,12 +98,28 @@ int main(int argc, char** argv)
 	printf("port onvif: %d\n",port_onvif);
 	printf("port http: %d\n",port_http);
 	
+	pthread_create(&thread_http, NULL, http_server, NULL);
 
+	struct http_response *hrep = http_get("http://localhost:8200/dvr/v1.0/GetDiscoveryMode", "User-agent:MyUserAgent\r\n"); 
+	if(hrep)
+	{
+		printf("http code: %d\n",hrep->status_code_int);
+		printf("http body: %s\n",hrep->body);
+		if(!strstr(hrep->body, "NonDiscoverable"))
+		{
+			pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
+			pthread_join(thread_onvif, NULL);
+		}
+	}
+	else{
+		printf("\nCant connect to uri -> Auto turn on thread discovery\n");
+		pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
+		pthread_join(thread_onvif, NULL);
+	}
 	
-    pthread_create(&thread_http, NULL, http_server, NULL);
-	pthread_create(&thread_onvif, NULL, onvif_discovery_server, NULL);
+    
     pthread_join(thread_http, NULL);
-	pthread_join(thread_onvif, NULL);
+	
 
 	return 0;
 }
@@ -142,10 +159,7 @@ void* onvif_discovery_server(void *vargp)
 	// signal(SIGINT, &sighandler);
 	while (1)
 	{
-		if(is_turn_on_discovery)
-		{
-			soap_wsdd_listen(serv, 1000);
-		}
+		soap_wsdd_listen(serv, 1000);
 	}
 }
 
@@ -299,20 +313,23 @@ char* get_address(){
 	x = port_onvif;
     char port_array[size];
     for (int i = size - 1; x ; i--) {
+		// *port_array[i] = char(x % 10 + '0');
 		port_array[i] = x % 10 + '0';
 		x = x/10;
 	//    printf("address:%d, %c, %d, %d \n",i, port_array[i], size, x);
     }
+	port_array[size] = '\0';
 	// port_array[3] = '0';
 	// port_array[2] = '0';
 	// port_array[1] = '0';
 	// port_array[0] = '8';
+	
 	char* local_ip = malloc(100);
 	strcpy(local_ip, (char*)"http://");
 	strcat(local_ip, (char*)host);
 	strcat(local_ip, (char*)":");
-	strcat(local_ip, (char*)"8000");
-	// strcat(local_ip, (char*)port_array);
+	// strcat(local_ip, (char*)"8000");
+	strcat(local_ip, (char*)port_array);
 	strcat(local_ip, (char*)"/onvif/device_service");
 	printf("address: %s \n", local_ip);
 	return local_ip;
