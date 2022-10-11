@@ -1,5 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/ngoc/Documents/gsoap/onvif-discovery'
+make: Entering directory '/home/ngoc/Documents/gsoap/onvif_discovery'
 cc -g -I.   -c -o onvif_discovery.o onvif_discovery.c
 cc -g -I.   -c -o soapC.o soapC.c
 cc -g -I.   -c -o stdsoap2.o stdsoap2.c
@@ -7,6 +7,6 @@ cc -g -I.   -c -o soapServer.o soapServer.c
 cc -g -I.   -c -o soapClient.o soapClient.c
 cc -g -I.   -c -o wsaapi.o wsaapi.c
 cc -g -I.   -c -o wsddapi.o wsddapi.c
-cc -lm  onvif_discovery.o soapC.o stdsoap2.o soapServer.o soapClient.o wsaapi.o wsddapi.o   -o onvif_discovery
-make: Leaving directory '/home/ngoc/Documents/gsoap/onvif-discovery'
+cc -lm -lpthread  onvif_discovery.o soapC.o stdsoap2.o soapServer.o soapClient.o wsaapi.o wsddapi.o /usr/lib/x86_64-linux-gnu/libpthread.so   -o onvif_discovery
+make: Leaving directory '/home/ngoc/Documents/gsoap/onvif_discovery'
  

@@ -1,6 +1,4 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
- 
 # GNU Make 4.2.1
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2016 Free Software Foundation, Inc.
@@ -8,7 +6,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Sep  5 10:51:54 2021
+# Make data base, printed on Tue Oct 11 10:34:40 2022
 
 # Variables
 
@@ -26,14 +24,12 @@ DESKTOP_SESSION = ubuntu
 XDG_SESSION_CLASS = user
 # environment
 XDG_SESSION_TYPE = x11
-# environment
-VSCODE_LOG_NATIVE = false
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
 IM_CONFIG_PHASE = 1
 # environment
-PLATFORMIO_IDE = 2.3.3
+PLATFORMIO_IDE = 2.5.4
 # automatic
 @D = $(patsubst %/,%,$(dir $@))
 # environment
@@ -43,7 +39,7 @@ GDMSESSION = ubuntu
 # environment
 XMODIFIERS = @im=ibus
 # makefile
-CURDIR := /home/ngoc/Documents/gsoap/onvif-discovery
+CURDIR := /home/ngoc/Documents/gsoap/onvif_discovery
 # makefile
 SHELL = /bin/sh
 # environment
@@ -53,7 +49,7 @@ _ = /usr/share/code/code
 # makefile (from 'makefile', line 1)
 CFLAGS = -g -I.
 # environment
-JOURNAL_STREAM = 8:51252
+JOURNAL_STREAM = 8:84627
 # environment
 XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
 # makefile (from 'makefile', line 1)
@@ -73,9 +69,7 @@ XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/d
 # environment
 DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # environment
-VSCODE_VERBOSE_LOGGING = true
-# environment
-MANAGERPID = 1601
+MANAGERPID = 2161
 # environment
 LESSOPEN = | /usr/bin/lesspipe %s
 # environment
@@ -91,21 +85,19 @@ GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-SESSION_MANAGER = local/Ngoc:@/tmp/.ICE-unix/1823,unix/Ngoc:/tmp/.ICE-unix/1823
+SESSION_MANAGER = local/ngocvi:@/tmp/.ICE-unix/2480,unix/ngocvi:/tmp/.ICE-unix/2480
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
 XDG_MENU_PREFIX = gnome-
 # environment
-VSCODE_LOG_STACK = false
+ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_CRASH_REPORTER_START_OPTIONS = {"companyName":"Microsoft","productName":"VSCode","submitURL":"appcenter://code?aid=fba07a4d-84bd-4fc8-a125-9640fc8ce171&uid=5169a6ce-42cf-4da3-9436-abb1b15eed52&iid=5169a6ce-42cf-4da3-9436-abb1b15eed52&sid=5169a6ce-42cf-4da3-9436-abb1b15eed52","uploadToServer":true}
-# environment
-INVOCATION_ID = 09a793110a344dbba78db6014561e28e
+INVOCATION_ID = 63c908314eb84bd5b15d34899c2a35e5
 # makefile (from 'makefile', line 2)
-LDFLAGS = -lm
+LDFLAGS = -lm -lpthread
 # default
-.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink guile load
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
 LS_COLORS = 
 # environment
@@ -113,19 +105,17 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 4364
+GIO_LAUNCHED_DESKTOP_FILE_PID = 3813
 # automatic
 %F = $(notdir $%)
 # environment
 DISPLAY = :0
 # environment
-VSCODE_PIPE_LOGGING = true
-# environment
-PWD = /home/ngoc/Documents/gsoap/onvif-discovery
+PWD = /home/ngoc/Documents/gsoap/onvif_discovery
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 1779
+SSH_AGENT_PID = 2422
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # environment
@@ -133,13 +123,13 @@ GTK_MODULES = gail:atk-bridge
 # makefile (from 'makefile', line 3)
 PLUGIN_OBJS = wsaapi.o wsddapi.o
 # environment
-VSCODE_AMD_ENTRYPOINT = vs/workbench/services/extensions/node/extensionHostProcess
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
 HOME = /home/ngoc
 # environment
 LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
-VSCODE_CODE_CACHE_PATH = /home/ngoc/.config/Code/CachedData/c3f126316369cd610563c75b1b1725e0679adfb3
+VSCODE_CODE_CACHE_PATH = /home/ngoc/.config/Code/CachedData/74b1f979648cc44d385a2286793c226e611f59e7
 # environment
 LOGNAME = ngoc
 # environment
@@ -155,19 +145,17 @@ GNOME_DESKTOP_SESSION_ID = this-is-deprecated
 # environment
 LC_TIME = vi_VN
 # environment
-PLATFORMIO_PATH = /home/ngoc/.platformio/penv/bin:/home/ngoc/.platformio/penv:/home/ngoc/.platformio/python3/bin:/home/ngoc/bin:/home/ngoc/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PLATFORMIO_PATH = /home/ngoc/.platformio/python3/bin:/home/ngoc/.local/bin:/home/ngoc/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # default
 MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-PATH = /home/ngoc/bin:/home/ngoc/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PATH = /home/ngoc/.local/bin:/home/ngoc/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # environment
 SHLVL = 0
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
-# environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-6e0d06bf-6423-4eb1-82d8-f26496f20e36.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -189,15 +177,13 @@ MAKE_COMMAND := make
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-ee68dce3-1.58.2-main.sock
+VSCODE_IPC_HOOK = /run/user/1000/vscode-ee68dce3-1.71.2-main.sock
 # makefile
 MAKEFLAGS = pqrR
 # environment
 MFLAGS = -pqrR
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
-# environment
-BREAKPAD_DUMP_LOCATION = /home/ngoc/.config/Code/exthost Crash Reports
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # environment
@@ -205,19 +191,17 @@ GDK_BACKEND = x11
 # environment
 LC_PAPER = vi_VN
 # environment
+NO_AT_BRIDGE = 1
+# environment
 QT_ACCESSIBILITY = 1
 # default
 MAKEFILES := 
 # environment
 LC_NUMERIC = vi_VN
-# environment
-VSCODE_BROWSER_CODE_LOADING = bypassHeatCheck
 # automatic
 <F = $(notdir $<)
 # environment
 PLATFORMIO_CALLER = vscode
-# environment
-ELECTRON_RUN_AS_NODE = 1
 # environment
 LC_MEASUREMENT = vi_VN
 # environment
@@ -243,9 +227,9 @@ LC_ADDRESS = vi_VN
 # environment
 LANG = C
 # environment
-VSCODE_PID = 4364
+VSCODE_PID = 3813
 # variable set hash-table stats:
-# Load=116/1024=11%, Rehash=0, Collisions=21/142=15%
+# Load=109/1024=11%, Rehash=0, Collisions=19/135=14%
 
 # Pattern-specific Variable Values
 
@@ -253,9 +237,9 @@ VSCODE_PID = 4364
 
 # Directories
 
-# . (device 2053, inode 2493066): 35 files, no impossibilities.
+# . (device 2068, inode 9439580): 40 files, no impossibilities.
 
-# 35 files, no impossibilities in 1 directories.
+# 40 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -285,7 +269,7 @@ soapC.o:
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2021-09-05 10:51:53.116180439
+#  Last modified 2021-09-23 14:57:42.967655824
 #  File has been updated.
 #  Successfully updated.
 
@@ -294,8 +278,10 @@ soapServer.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-
  
+make: *** No rule to make target 'all'.  Stop.
+
+
 # Not a target:
 soapClient.o:
 #  Implicit rule search has not been done.
@@ -314,13 +300,20 @@ wsaapi.o:
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+-lpthread:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 clean:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 7):
-	rm onvif_discovery
 	rm *.o
+	rm onvif_discovery
+	
 
 # Not a target:
 wsddapi.o:
@@ -334,25 +327,25 @@ onvif_discovery.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-onvif_discovery: onvif_discovery.o soapC.o stdsoap2.o soapServer.o soapClient.o wsaapi.o wsddapi.o
+onvif_discovery: onvif_discovery.o soapC.o stdsoap2.o soapServer.o soapClient.o wsaapi.o wsddapi.o -lpthread
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
 # files hash-table stats:
-# Load=13/1024=1%, Rehash=0, Collisions=2/30=7%
+# Load=14/1024=1%, Rehash=0, Collisions=2/32=6%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 41 / storage = 436 B / avg = 10 B
-# current buf: size = 8162 B / used = 436 B / count = 41 / avg = 10 B
+# strcache buffers: 1 (0) / strings = 47 / storage = 513 B / avg = 10 B
+# current buf: size = 8162 B / used = 513 B / count = 47 / avg = 10 B
 
-# strcache performance: lookups = 55 / hit rate = 25%
+# strcache performance: lookups = 61 / hit rate = 22%
 # hash-table stats:
-# Load=41/8192=1%, Rehash=0, Collisions=1/55=2%
-# Finished Make data base on Sun Sep  5 10:51:54 2021
+# Load=47/8192=1%, Rehash=0, Collisions=1/61=2%
+# Finished Make data base on Tue Oct 11 10:34:40 2022
 
  

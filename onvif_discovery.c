@@ -37,10 +37,15 @@ void* http_server(void *vargp);
 void* onvif_discovery_server(void *vargp);
 int port_http = 8001;
 
-char  g_scopes[] = "onvif://www.onvif.org/Profile/Streaming \
-				onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
-				onvif://www.onvif.org/name/ELCOM_IPCAM \
-				onvif://www.onvif.org/location/country/Vietnam"; 
+char  g_scopes[] = "onvif://www.onvif.org/type/Video_encoder \
+onvif://www.onvif.org/type/Network_Video_Transmitter \
+onvif://www.onvif.org/type/adio_encoder \
+onvif://www.onvif.org/hardware/ELCOM_IPCAM \
+onvif://www.onvif.org/Profile/Streaming \
+onvif://www.onvif.org/model/C5F0S7Z0N1P0L0V0 \
+onvif://www.onvif.org/manufacturer/ELCOM \
+onvif://www.onvif.org/name/ELCOM_IPCAM \
+onvif://www.onvif.org/location/country/Vietnam"; 
 
 // char  g_scopes[] = "onvif://www.onvif.org/name/IPCAM";
 
@@ -210,6 +215,7 @@ soap_wsdd_mode wsdd_event_Probe(struct soap *soap, const char *MessageID,
 
 
 	struct http_response *hrep = http_get("http://localhost:8200/dvr/v1.0/GetDiscoveryMode", "User-agent:MyUserAgent\r\n"); 
+	// struct http_response *hrep = http_get("http://192.168.51.90:8200/dvr/v1.0/GetDiscoveryMode", "User-agent:MyUserAgent\r\n"); 
 	if(hrep)
 	{
 		printf("http code: %d\n",hrep->status_code_int);
@@ -233,11 +239,12 @@ soap_wsdd_mode wsdd_event_Probe(struct soap *soap, const char *MessageID,
 			char* address = get_address();
 			soap_wsdd_init_ProbeMatches(soap, matches);
 			soap_wsdd_add_ProbeMatch(soap, matches,
-						soap_wsa_rand_uuid(soap),
-						"tdn:NetworkVideoTransmitter", g_scopes,
+						// soap_wsa_rand_uuid(soap),
+						"urn:uuid:464A4854-4656-5242-4530-313035394100",
+						"tdn:NetworkVideoTransmitter tds:Device", g_scopes,
 						NULL,
 						address,
-						10);
+						1);
 		}
 		else{
 			printf("Mode NonDiscoverable\n");
